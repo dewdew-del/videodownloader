@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>VideoDownloader</title>
+<link rel="stylesheet" href="style.css" />
+</head>
+<body>
+<main>
+  <header>
+    <h1>Video<span>Downloader</span></h1>
+    <p>Paste a link from YouTube, Facebook, TikTok, X, Instagram, Dailymotion and many more sites. Get MP4 or MP3.</p>
+  </header>
+
+  <div id="warn" class="warn" hidden></div>
+
+  <nav class="tabs" role="tablist">
+    <button type="button" role="tab" class="on" data-tab="single" aria-selected="true">Single link</button>
+    <button type="button" role="tab" data-tab="batch" aria-selected="false">Batch download</button>
+  </nav>
+
+  <section class="card">
+    <!-- Single mode -->
+    <div id="single">
+      <label for="link">Video link</label>
+      <div class="inputrow">
+        <input id="link" type="url" placeholder="https://www.youtube.com/watch?v=..." autocomplete="off" />
+        <button id="paste" type="button" class="ghost">Paste</button>
+      </div>
+
+      <div id="preview" class="preview" hidden>
+        <div class="thumb"><img alt="" /><span class="dur"></span></div>
+        <div class="pinfo">
+          <div class="ptitle"></div>
+          <div class="pmeta"></div>
+        </div>
+      </div>
+      <div id="pstatus" class="pstatus" hidden></div>
+    </div>
+
+    <!-- Batch mode -->
+    <div id="batch" hidden>
+      <label for="links">Links (one per line)</label>
+      <textarea id="links" rows="6" placeholder="https://www.youtube.com/watch?v=...&#10;https://www.tiktok.com/@user/video/...&#10;https://www.facebook.com/reel/..."></textarea>
+    </div>
+
+    <div class="row">
+      <div class="seg" role="radiogroup" aria-label="Format">
+        <button type="button" class="on" data-fmt="mp4">MP4 video</button>
+        <button type="button" data-fmt="mp3">MP3 audio</button>
+      </div>
+      <select id="quality" aria-label="Video quality">
+        <option value="best">Best quality</option>
+        <option value="1080">1080p</option>
+        <option value="720" selected>720p</option>
+        <option value="480">480p</option>
+        <option value="360">360p</option>
+      </select>
+      <button id="go" class="primary" disabled>Download</button>
+    </div>
+  </section>
+
+  <ul id="list"></ul>
+
+  <footer>Runs on your own PC. Only download videos you own or have permission to use.</footer>
+</main>
+<script src="app.js"></script>
+</body>
+</html>
