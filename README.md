@@ -39,6 +39,12 @@ Open **http://localhost:3100**.
 
 To use a different port: `$env:PORT=4000; npm start`
 
+## Share it with a public link (Cloudflare Tunnel)
+```powershell
+powershell -ExecutionPolicy Bypass -File start-public.ps1
+```
+This starts the app and prints a free public link like `https://something.trycloudflare.com`. Downloads still run on your PC's home internet, so YouTube allows them. The link only works while that window is open, and you get a new link each time.
+
 ## Updating yt-dlp
 If a site stops working:
 ```powershell
@@ -46,7 +52,7 @@ If a site stops working:
 ```
 
 ## Why it runs locally
-Free hosting (like Vercel) can't run long downloads or FFmpeg, and many video sites block cloud servers. Running on your own PC avoids both problems.
+Free hosting (like Vercel) can't run long downloads or FFmpeg, and many video sites block cloud servers. Running on your own PC avoids both problems, and Cloudflare Tunnel makes it reachable from anywhere.
 
 ## Note
 For personal use. Only download videos you own or have permission to use, and respect each site's terms of service.
