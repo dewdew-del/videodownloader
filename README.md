@@ -1,5 +1,9 @@
 # VideoDownloader
 
+**Live demo:** https://submissions-guided-christ-returned.trycloudflare.com
+
+> The demo runs from my laptop through a free Cloudflare Tunnel, so it only works while my laptop is on, and the link changes when I restart it. If it doesn't load, see [Setup](#setup-windows) to run it yourself.
+
 A local web app that turns video links into **MP4** or **MP3** files. Paste a link, see a preview, and download. There's also a batch mode for many links at once.
 
 Built with Node.js + Express, powered by [yt-dlp](https://github.com/yt-dlp/yt-dlp) and [FFmpeg](https://ffmpeg.org/).
