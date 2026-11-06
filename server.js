@@ -8,6 +8,8 @@ const os = require("os");
 const crypto = require("crypto");
 
 const PORT = Number(process.env.PORT) || 3100; // 3000 is used by Exposure Lab
+// Local PC: only this computer can connect. On Render/Docker, HOST=0.0.0.0 lets the host reach it.
+const HOST = process.env.HOST || "127.0.0.1";
 const BIN_DIR = path.join(__dirname, "bin");
 const TMP_DIR = path.join(os.tmpdir(), "videodownloader");
 fs.mkdirSync(TMP_DIR, { recursive: true });
@@ -177,7 +179,7 @@ setInterval(() => {
   }
 }, 10 * 60 * 1000);
 
-app.listen(PORT, "127.0.0.1", () => {
-  console.log(`VideoDownloader running at http://localhost:${PORT}`);
+app.listen(PORT, HOST, () => {
+  console.log(`VideoDownloader running at http://${HOST === "0.0.0.0" ? "localhost" : HOST}:${PORT}`);
   console.log(`yt-dlp: ${YTDLP || "MISSING"}  |  ffmpeg: ${FFMPEG || "MISSING"}`);
 });
