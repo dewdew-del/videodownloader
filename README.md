@@ -1,4 +1,4 @@
-﻿# VideoDownloader
+# VideoDownloader
 
 **Live demo:** https://exception-kid-communication-spas.trycloudflare.com
 
@@ -18,13 +18,13 @@ Built with Node.js + Express, powered by [yt-dlp](https://github.com/yt-dlp/yt-d
 ## Tested sites
 | Site | Status |
 |---|---|
-| YouTube (videos + Shorts) | âœ… |
-| TikTok | âœ… |
-| X / Twitter (posts with a video) | âœ… |
-| Instagram | âœ… |
-| Facebook (videos + reels) | âœ… |
-| Dailymotion | âœ… |
-| Vimeo, Reddit | âŒ need a login |
+| YouTube (videos + Shorts) | ✅ |
+| TikTok | ✅ |
+| X / Twitter (posts with a video) | ✅ |
+| Instagram | ✅ |
+| Facebook (videos + reels) | ✅ |
+| Dailymotion | ✅ |
+| Vimeo, Reddit | ❌ need a login |
 
 yt-dlp supports many more sites. Some break now and then when a site changes its pages. Updating yt-dlp usually fixes that.
 
