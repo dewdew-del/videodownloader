@@ -154,6 +154,27 @@ test("cancelling a queued job removes it without spawning", () => {
   assert.equal(spawnFn.children.length, 3);
 });
 
+test("starting the same link + format while it is still running is refused", () => {
+  const { d, spawnFn } = setup();
+  d.start({ url: "https://x/v", format: "mp4", quality: "720" });
+  assert.throws(() => d.start({ url: "https://x/v", format: "mp4", quality: "1080" }), /already downloading/i);
+  d.start({ url: "https://x/v", format: "mp3", quality: "best" }); // a different format is fine
+  spawnFn.children[0].out("C:\\x\\v.mp4\n");
+  spawnFn.children[0].exit(0);
+  d.start({ url: "https://x/v", format: "mp4", quality: "720" }); // allowed again once finished
+});
+
+test("getInfo runs at most 3 lookups at once; the rest wait", async () => {
+  const { d, spawnFn } = setup();
+  const ps = [1, 2, 3, 4, 5].map((n) => d.getInfo(`https://x/${n}`));
+  assert.equal(spawnFn.children.length, 3);
+  spawnFn.children[0].out(JSON.stringify({ title: "one" }));
+  spawnFn.children[0].exit(0);
+  assert.equal((await ps[0]).title, "one");
+  assert.equal(spawnFn.children.length, 4);
+  assert.equal(spawnFn.children[3].args[spawnFn.children[3].args.length - 1], "https://x/4");
+});
+
 test("isKnownFile is false for files Kuha didn't download", () => {
   const { d } = setup();
   assert.equal(d.isKnownFile("C:\\Windows\\notepad.exe"), false);

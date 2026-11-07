@@ -23,7 +23,29 @@ function createDownloader({ ytdlp, ffmpeg, getSaveDir, spawnFn = childProcess.sp
   const emit = (job) =>
     events.emit("progress", { id: job.id, status: job.status, progress: job.progress, file: job.file, error: job.error });
 
+  // Preview lookups share their own limit, so a 30-link batch doesn't start 30 yt-dlp processes.
+  let infoRunning = 0;
+  const infoQueue = [];
   function getInfo(url) {
+    return new Promise((resolve, reject) => {
+      infoQueue.push({ url, resolve, reject });
+      pumpInfo();
+    });
+  }
+  function pumpInfo() {
+    while (infoRunning < concurrency && infoQueue.length) {
+      const { url, resolve, reject } = infoQueue.shift();
+      infoRunning++;
+      const done = (fn) => (v) => {
+        infoRunning--;
+        fn(v);
+        pumpInfo();
+      };
+      lookup(url).then(done(resolve), done(reject));
+    }
+  }
+
+  function lookup(url) {
     return new Promise((resolve, reject) => {
       const p = spawnFn(ytdlp, ["-J", "--no-playlist", "--no-warnings", url], { windowsHide: true });
       let out = "";
@@ -44,6 +66,12 @@ function createDownloader({ ytdlp, ffmpeg, getSaveDir, spawnFn = childProcess.sp
   }
 
   function start({ url, format, quality }) {
+    // Two jobs for the same link + format would write to the same file at once.
+    for (const j of jobs.values()) {
+      if (j.url === url && j.format === format && !j.finished && j.status !== "cancelled") {
+        throw new Error("Already downloading this link.");
+      }
+    }
     const job = { id: crypto.randomUUID(), url, format, quality, status: "queued", progress: 0, file: null, error: null, child: null, dests: new Set() };
     jobs.set(job.id, job);
     queue.push(job);

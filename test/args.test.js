@@ -43,7 +43,8 @@ test("buildArgs always: common flags, output template, url last", () => {
     assert.equal(a[a.indexOf("--encoding") + 1], "utf-8");
     assert.equal(a[a.indexOf("--print") + 1], "after_move:filepath");
     assert.equal(a[a.indexOf("--ffmpeg-location") + 1], base.ffmpegPath);
-    assert.equal(a[a.indexOf("-o") + 1], path.join(base.saveDir, "%(title).150B.%(ext)s"));
+    // The video id keeps two different videos with the same title (e.g. "Video by user") apart.
+    assert.equal(a[a.indexOf("-o") + 1], path.join(base.saveDir, "%(title).150B [%(id)s].%(ext)s"));
     assert.equal(a[a.length - 1], base.url);
   }
 });

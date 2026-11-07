@@ -13,7 +13,8 @@ function buildArgs({ url, format, quality, saveDir, ffmpegPath }) {
     // --print implies --quiet; turn progress and "Destination:" lines back on.
     "--no-quiet", "--progress",
     "--ffmpeg-location", ffmpegPath,
-    "-o", path.join(saveDir, "%(title).150B.%(ext)s"),
+    // The id keeps same-titled videos (e.g. "Video by user") from overwriting each other.
+    "-o", path.join(saveDir, "%(title).150B [%(id)s].%(ext)s"),
   ];
   if (format === "mp3") {
     args.push("-x", "--audio-format", "mp3", "--audio-quality", "0");
