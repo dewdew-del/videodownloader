@@ -30,6 +30,7 @@ function fakeResources() {
   const res = tmp();
   fs.writeFileSync(path.join(res, "yt-dlp.exe"), "YTDLP-V1");
   fs.writeFileSync(path.join(res, "ffmpeg.exe"), "FFMPEG");
+  fs.writeFileSync(path.join(res, "ffprobe.exe"), "FFPROBE");
   return res;
 }
 
@@ -50,18 +51,25 @@ test("getVersion returns the trimmed version, or null on failure", async () => {
   assert.equal(await tools.getVersion("y", fakeSpawn(1)), null);
 });
 
-test("init copies yt-dlp into userData/bin exactly once and uses ffmpeg from resources", () => {
+test("init copies yt-dlp into userData/bin exactly once and points ffmpeg at the resources folder", () => {
   const res = fakeResources();
   const user = tmp();
   const first = tools.init({ resourcesPath: res, userDataPath: user });
   assert.equal(first.ytdlp, path.join(user, "bin", "yt-dlp.exe"));
-  assert.equal(first.ffmpeg, path.join(res, "ffmpeg.exe"));
+  // A folder, so yt-dlp finds both ffmpeg.exe and ffprobe.exe (MP3 needs ffprobe).
+  assert.equal(first.ffmpeg, res);
   assert.equal(fs.readFileSync(first.ytdlp, "utf8"), "YTDLP-V1");
 
   // A self-updated copy must not be overwritten by the bundled one on the next launch.
   fs.writeFileSync(first.ytdlp, "YTDLP-UPDATED");
   tools.init({ resourcesPath: res, userDataPath: user });
   assert.equal(fs.readFileSync(first.ytdlp, "utf8"), "YTDLP-UPDATED");
+});
+
+test("init reports ffmpeg null when ffprobe is missing", () => {
+  const res = fakeResources();
+  fs.rmSync(path.join(res, "ffprobe.exe"));
+  assert.equal(tools.init({ resourcesPath: res, userDataPath: tmp() }).ffmpeg, null);
 });
 
 test("init reports null paths when bundled tools are missing", () => {

@@ -35,6 +35,10 @@ test("buildArgs always: common flags, output template, url last", () => {
   for (const format of ["mp4", "mp3"]) {
     const a = buildArgs({ ...base, format, quality: "360" });
     for (const f of ["--no-playlist", "--newline", "--no-warnings", "--windows-filenames"]) assert.ok(a.includes(f), f);
+    // --print implies --quiet; these bring back the progress and Destination lines Kuha reads.
+    assert.ok(a.includes("--no-quiet"));
+    assert.ok(a.includes("--progress"));
+    assert.ok(a.indexOf("--no-quiet") > a.indexOf("--print"));
     // Without this, yt-dlp prints paths in the Windows console code page and emoji titles get mangled.
     assert.equal(a[a.indexOf("--encoding") + 1], "utf-8");
     assert.equal(a[a.indexOf("--print") + 1], "after_move:filepath");

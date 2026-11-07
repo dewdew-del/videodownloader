@@ -35,6 +35,21 @@ const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
     }));
   });
   console.log(JSON.stringify(result.result.value, null, 2));
+  // Optional 2nd argument: save a PNG screenshot of the window there.
+  if (process.argv[3]) {
+    const shot = await Promise.race([
+      new Promise((resolve) => {
+        ws.addEventListener("message", (m) => {
+          const d = JSON.parse(m.data);
+          if (d.id === 2) resolve(d.result);
+        });
+        ws.send(JSON.stringify({ id: 2, method: "Page.captureScreenshot", params: { format: "png" } }));
+      }),
+      sleep(10000).then(() => null),
+    ]);
+    if (shot) require("fs").writeFileSync(process.argv[3], Buffer.from(shot.data, "base64"));
+    else console.error("cdp-eval: screenshot timed out");
+  }
   ws.close();
 })()
   .catch((e) => console.error("cdp-eval:", e.message))

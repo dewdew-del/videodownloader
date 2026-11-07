@@ -5,9 +5,10 @@ const childProcess = require("child_process");
 
 // yt-dlp is copied to userData once, because Program Files isn't writable and
 // yt-dlp -U replaces its own file. FFmpeg never changes, so it runs from resources.
+// `ffmpeg` is the folder holding ffmpeg.exe + ffprobe.exe (passed to --ffmpeg-location).
 function init({ resourcesPath, userDataPath }) {
   const bundledYtdlp = path.join(resourcesPath, "yt-dlp.exe");
-  const ffmpeg = path.join(resourcesPath, "ffmpeg.exe");
+  const hasFfmpeg = ["ffmpeg.exe", "ffprobe.exe"].every((f) => fs.existsSync(path.join(resourcesPath, f)));
   const ytdlp = path.join(userDataPath, "bin", "yt-dlp.exe");
 
   if (!fs.existsSync(ytdlp) && fs.existsSync(bundledYtdlp)) {
@@ -16,7 +17,7 @@ function init({ resourcesPath, userDataPath }) {
   }
   return {
     ytdlp: fs.existsSync(ytdlp) ? ytdlp : null,
-    ffmpeg: fs.existsSync(ffmpeg) ? ffmpeg : null,
+    ffmpeg: hasFfmpeg ? resourcesPath : null,
   };
 }
 

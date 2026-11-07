@@ -16,6 +16,13 @@ test("cleanError: private / login video gives the login message", () => {
   );
 });
 
+test("cleanError: MP3 from a video with no audio track gives the no-sound message", () => {
+  assert.equal(
+    cleanError("ERROR: Postprocessing: WARNING: unable to obtain file audio codec with ffprobe"),
+    "This video has no sound, so it can't be saved as MP3. Try MP4 instead."
+  );
+});
+
 test("cleanError: empty stderr gives Download failed.", () => {
   assert.equal(cleanError(""), "Download failed.");
 });

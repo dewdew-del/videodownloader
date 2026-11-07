@@ -16,12 +16,13 @@ const LINKS = [
   ["Instagram", "https://www.instagram.com/p/aye83DjauH/", "mp4"],
   ["Facebook reel", "https://www.facebook.com/reel/1195289147628387", "mp4"],
   ["Facebook video (MP3)", "https://www.facebook.com/watch/?v=10153231379946729", "mp3"],
+  ["YouTube (MP3)", "https://www.youtube.com/watch?v=jNQXAC9IVRw", "mp3"],
   ["Dailymotion", "https://www.dailymotion.com/video/x7tgad0", "mp4"],
 ];
 
 const d = createDownloader({
   ytdlp: path.join(vendor, "yt-dlp.exe"),
-  ffmpeg: path.join(vendor, "ffmpeg.exe"),
+  ffmpeg: vendor, // folder with ffmpeg.exe + ffprobe.exe
   getSaveDir: () => saveDir,
 });
 

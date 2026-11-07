@@ -10,6 +10,8 @@ function buildArgs({ url, format, quality, saveDir, ffmpegPath }) {
     "--encoding", "utf-8", // otherwise Windows prints paths in the console code page and emoji break
 
     "--print", "after_move:filepath",
+    // --print implies --quiet; turn progress and "Destination:" lines back on.
+    "--no-quiet", "--progress",
     "--ffmpeg-location", ffmpegPath,
     "-o", path.join(saveDir, "%(title).150B.%(ext)s"),
   ];

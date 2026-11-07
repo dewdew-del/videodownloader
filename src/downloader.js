@@ -89,7 +89,8 @@ function createDownloader({ ytdlp, ffmpeg, getSaveDir, spawnFn = childProcess.sp
 
   function onLine(job, line) {
     if (job.status === "cancelled") return;
-    const dest = /\[download\] Destination: (.+)$/.exec(line) || /\[Merger\] Merging formats into "(.+)"$/.exec(line);
+    // Every file this job writes: downloads, the merged MP4, the converted MP3.
+    const dest = /^\[\w+\] Destination: (.+)$/.exec(line) || /\[Merger\] Merging formats into "(.+)"$/.exec(line);
     if (dest) job.dests.add(dest[1].trim());
     const pct = parseProgress(line);
     if (pct !== null && pct > job.progress && job.status === "downloading") {
@@ -106,7 +107,9 @@ function createDownloader({ ytdlp, ffmpeg, getSaveDir, spawnFn = childProcess.sp
     if (job.finished) return;
     job.finished = true;
     running--;
-    if (job.status !== "cancelled") {
+    if (job.status === "cancelled") {
+      removeLeftovers(job); // only now: the processes have exited and released the files
+    } else {
       const file = parseFilepath(out);
       if (code === 0 && file) {
         job.status = "done";
@@ -132,19 +135,21 @@ function createDownloader({ ytdlp, ffmpeg, getSaveDir, spawnFn = childProcess.sp
       queue.splice(queue.indexOf(job), 1);
       return;
     }
-    if (job.child) killFn(job.child.pid);
-    removeLeftovers(job);
+    if (job.child) killFn(job.child.pid); // files are removed in finish() once it exits
   }
 
-  // Delete only this job's temp files: <dest>.part, <dest>.ytdl, <dest>.part-FragN.
+  // Delete only what this cancelled job wrote: each destination file itself, plus
+  // <dest>.part / .ytdl / .part-FragN, and the converter's <name>.temp.<ext>.
   function removeLeftovers(job) {
     for (const dest of job.dests) {
       const dir = path.dirname(dest);
       const base = path.basename(dest);
+      const ext = path.extname(base);
+      const temp = `${base.slice(0, base.length - ext.length)}.temp${ext}`;
       let names = [];
       try { names = fs.readdirSync(dir); } catch { continue; }
       for (const n of names) {
-        if (n === `${base}.part` || n === `${base}.ytdl` || n.startsWith(`${base}.part-Frag`)) {
+        if (n === base || n === temp || n.startsWith(`${base}.`)) {
           try { fs.rmSync(path.join(dir, n), { force: true }); } catch {}
         }
       }

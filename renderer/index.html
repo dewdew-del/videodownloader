@@ -4,8 +4,103 @@
 <meta charset="UTF-8" />
 <meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' https: data:; style-src 'self'; script-src 'self'" />
 <title>Kuha</title>
+<link rel="stylesheet" href="style.css" />
 </head>
 <body>
-<h1>Kuha</h1>
+<main>
+  <header>
+    <div>
+      <h1>Kuha</h1>
+      <p>Paste a video link. Get MP4 or MP3.</p>
+    </div>
+    <button id="openSettings" type="button" class="icon" aria-label="Settings" title="Settings">⚙</button>
+  </header>
+
+  <div id="warn" class="warn" hidden></div>
+
+  <nav class="tabs" role="tablist">
+    <button type="button" role="tab" class="on" data-tab="single" aria-selected="true">Single link</button>
+    <button type="button" role="tab" data-tab="batch" aria-selected="false">Batch download</button>
+  </nav>
+
+  <section class="card">
+    <div id="single">
+      <label for="link">Video link</label>
+      <div class="inputrow">
+        <input id="link" type="url" placeholder="https://www.youtube.com/watch?v=..." autocomplete="off" spellcheck="false" />
+        <button id="paste" type="button" class="ghost">Paste</button>
+      </div>
+      <div id="preview" class="preview" hidden>
+        <div class="thumb"><img alt="" /><span class="dur"></span></div>
+        <div>
+          <div class="ptitle"></div>
+          <div class="pmeta"></div>
+        </div>
+      </div>
+      <div id="pstatus" class="pstatus" hidden></div>
+    </div>
+
+    <div id="batch" hidden>
+      <label for="links">Links (one per line)</label>
+      <textarea id="links" rows="6" spellcheck="false" placeholder="https://www.youtube.com/watch?v=...&#10;https://www.tiktok.com/@user/video/...&#10;https://www.facebook.com/reel/..."></textarea>
+    </div>
+
+    <div class="row">
+      <div class="seg" role="radiogroup" aria-label="Format">
+        <button type="button" class="on" data-fmt="mp4">MP4 video</button>
+        <button type="button" data-fmt="mp3">MP3 audio</button>
+      </div>
+      <select id="quality" aria-label="Video quality">
+        <option value="best">Best quality</option>
+        <option value="1080">1080p</option>
+        <option value="720">720p</option>
+        <option value="480">480p</option>
+        <option value="360">360p</option>
+      </select>
+      <button id="go" class="primary" disabled>Download</button>
+    </div>
+  </section>
+
+  <div class="savebar">
+    <span>Saving to: <strong id="saveDir">…</strong></span>
+    <button id="changeFolder" type="button" class="ghost small">Change</button>
+  </div>
+
+  <h2 id="listTitle" hidden>Downloads</h2>
+  <ul id="list"></ul>
+
+  <footer>Only download videos you own or have permission to use.</footer>
+</main>
+
+<dialog id="settings">
+  <form method="dialog">
+    <h2>Settings</h2>
+    <label for="defFormat">Default format</label>
+    <select id="defFormat">
+      <option value="mp4">MP4 video</option>
+      <option value="mp3">MP3 audio</option>
+    </select>
+    <label for="defQuality">Default video quality</label>
+    <select id="defQuality">
+      <option value="best">Best quality</option>
+      <option value="1080">1080p</option>
+      <option value="720">720p</option>
+      <option value="480">480p</option>
+      <option value="360">360p</option>
+    </select>
+    <div class="versions">
+      <div>Kuha <span id="vApp">…</span></div>
+      <div>yt-dlp <span id="vYtdlp">…</span></div>
+    </div>
+    <div class="row">
+      <button id="updateYtdlp" type="button" class="ghost">Update yt-dlp</button>
+      <span id="updateStatus" class="muted"></span>
+      <button class="primary" value="close">Done</button>
+    </div>
+  </form>
+</dialog>
+
+<script src="links.js"></script>
+<script src="app.js"></script>
 </body>
 </html>

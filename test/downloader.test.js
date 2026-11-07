@@ -127,7 +127,22 @@ test("cancel removes this job's .part/.ytdl/fragment files, not other downloads'
     fs.writeFileSync(path.join(saveDir, f), "x");
   }
   await d.cancel(id);
+  spawnFn.children[0].exit(1); // the process is gone only now; files are unlocked
   assert.deepEqual(fs.readdirSync(saveDir).sort(), ["Other.mp4.part", "done.mp4"]);
+});
+
+test("cancel while converting removes the downloaded source and the half-written output", async () => {
+  const saveDir = fs.mkdtempSync(path.join(os.tmpdir(), "kuha-dl-"));
+  const { d, spawnFn } = setup({ saveDir });
+  const id = d.start({ url: "https://x/v", format: "mp3", quality: "best" });
+  const src = path.join(saveDir, "Song.webm");
+  const mp3 = path.join(saveDir, "Song.mp3");
+  spawnFn.children[0].out(`[download] Destination: ${src}\n[download] 100%\n[ExtractAudio] Destination: ${mp3}\n`);
+  for (const f of ["Song.webm", "Song.mp3", "Song.temp.mp3", "Keep.mp3"]) fs.writeFileSync(path.join(saveDir, f), "x");
+  await d.cancel(id);
+  assert.ok(fs.existsSync(mp3), "files stay until the process has exited");
+  spawnFn.children[0].exit(1);
+  assert.deepEqual(fs.readdirSync(saveDir), ["Keep.mp3"]);
 });
 
 test("cancelling a queued job removes it without spawning", () => {
