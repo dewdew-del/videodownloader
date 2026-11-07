@@ -4,7 +4,7 @@
   "description": "Kuha - download videos as MP4 or MP3",
   "main": "main.js",
   "scripts": {
-    "test": "node --test test/",
+    "test": "node --test \"test/**/*.test.js\"",
     "start": "electron .",
     "fetch-tools": "powershell -ExecutionPolicy Bypass -File scripts/fetch-tools.ps1",
     "dist": "electron-builder --win nsis"
