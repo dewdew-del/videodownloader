@@ -7,6 +7,8 @@ function buildArgs({ url, format, quality, saveDir, ffmpegPath }) {
     "--newline",
     "--no-warnings",
     "--windows-filenames",
+    "--encoding", "utf-8", // otherwise Windows prints paths in the console code page and emoji break
+
     "--print", "after_move:filepath",
     "--ffmpeg-location", ffmpegPath,
     "-o", path.join(saveDir, "%(title).150B.%(ext)s"),

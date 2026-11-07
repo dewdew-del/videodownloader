@@ -35,6 +35,8 @@ test("buildArgs always: common flags, output template, url last", () => {
   for (const format of ["mp4", "mp3"]) {
     const a = buildArgs({ ...base, format, quality: "360" });
     for (const f of ["--no-playlist", "--newline", "--no-warnings", "--windows-filenames"]) assert.ok(a.includes(f), f);
+    // Without this, yt-dlp prints paths in the Windows console code page and emoji titles get mangled.
+    assert.equal(a[a.indexOf("--encoding") + 1], "utf-8");
     assert.equal(a[a.indexOf("--print") + 1], "after_move:filepath");
     assert.equal(a[a.indexOf("--ffmpeg-location") + 1], base.ffmpegPath);
     assert.equal(a[a.indexOf("-o") + 1], path.join(base.saveDir, "%(title).150B.%(ext)s"));
