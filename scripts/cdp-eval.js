@@ -6,8 +6,11 @@ const path = require("path");
 
 const expr = process.argv[2];
 const PORT = 9333;
-const electron = require("electron"); // path to electron.exe when required from Node
-const app = spawn(electron, [path.join(__dirname, ".."), `--remote-debugging-port=${PORT}`], { stdio: "ignore" });
+// KUHA_EXE=dist/win-unpacked/Kuha.exe checks the packaged app instead of the dev one.
+const exe = process.env.KUHA_EXE;
+const app = exe
+  ? spawn(exe, [`--remote-debugging-port=${PORT}`], { stdio: "ignore" })
+  : spawn(require("electron"), [path.join(__dirname, ".."), `--remote-debugging-port=${PORT}`], { stdio: "ignore" });
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
 (async () => {

@@ -10,11 +10,56 @@
     "dist": "electron-builder --win nsis"
   },
   "keywords": [],
-  "author": "",
-  "license": "ISC",
+  "author": "dewdew-del",
+  "license": "MIT",
   "type": "commonjs",
   "devDependencies": {
     "electron": "^45.2.3",
     "electron-builder": "^26.18.0"
+  },
+  "build": {
+    "appId": "com.dewdewdel.kuha",
+    "productName": "Kuha",
+    "directories": {
+      "output": "dist",
+      "buildResources": "build"
+    },
+    "files": [
+      "main.js",
+      "preload.js",
+      "src/**",
+      "renderer/**",
+      "package.json"
+    ],
+    "extraResources": [
+      {
+        "from": "vendor",
+        "to": "vendor",
+        "filter": [
+          "yt-dlp.exe",
+          "ffmpeg.exe",
+          "ffprobe.exe"
+        ]
+      }
+    ],
+    "win": {
+      "target": [
+        {
+          "target": "nsis",
+          "arch": [
+            "x64"
+          ]
+        }
+      ],
+      "icon": "build/icon.png"
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "shortcutName": "Kuha",
+      "artifactName": "Kuha-Setup-${version}.exe"
+    }
   }
 }
