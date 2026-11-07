@@ -1,62 +1,56 @@
-# VideoDownloader
+# Kuha
 
-**Live demo:** https://exception-kid-communication-spas.trycloudflare.com
+**Download for Windows:** https://github.com/dewdew-del/videodownloader/releases/latest
 
-> The demo runs from my laptop through a free Cloudflare Tunnel, so it only works while my laptop is on, and the link changes when I restart it. If it doesn't load, see [Setup](#setup-windows) to run it yourself.
+> Windows 10/11, 64-bit. The installer is about 234 MB because yt-dlp and FFmpeg come bundled, so there's nothing else to install.
 
-A local web app that turns video links into **MP4** or **MP3** files. Paste a link, see a preview, and download. There's also a batch mode for many links at once.
+Kuha ("to get" in Bisaya and Tagalog) is a desktop app that saves videos from the internet as **MP4** or **MP3**. Paste a link, see a preview, and download. There's also a batch mode for many links at once.
 
-Built with Node.js + Express, powered by [yt-dlp](https://github.com/yt-dlp/yt-dlp) and [FFmpeg](https://ffmpeg.org/).
+Built with Electron, powered by [yt-dlp](https://github.com/yt-dlp/yt-dlp) and [FFmpeg](https://ffmpeg.org/).
 
 ## Features
-- **Single link mode** with a live preview (thumbnail, title, length, site)
-- **Batch mode**: paste many links, one per line, and download up to 3 at a time
-- **MP4** (360p to best quality) or **MP3** (best audio quality)
-- Live progress bar for each download
-- Plain-English error messages
+- **Single link**: live preview with thumbnail, title, length and site
+- **Batch download**: paste many links, one per line. Duplicates and non-links are skipped, and up to 3 download at a time
+- **MP4** (360p up to best quality) or **MP3** (best audio quality)
+- Saves straight to `Downloads\Kuha`, or any folder you choose
+- **Cancel** any download. Half-finished files are cleaned up
+- **Open** and **Show in folder** buttons on every finished download
+- yt-dlp updates itself on launch, so sites keep working
+- Plain-English error messages (private video, no sound for MP3, site not readable)
 
 ## Tested sites
-| Site | Status |
-|---|---|
-| YouTube (videos + Shorts) | ✅ |
-| TikTok | ✅ |
-| X / Twitter (posts with a video) | ✅ |
-| Instagram | ✅ |
-| Facebook (videos + reels) | ✅ |
-| Dailymotion | ✅ |
-| Vimeo, Reddit | ❌ need a login |
+| Site | MP4 | MP3 |
+|---|---|---|
+| YouTube (videos + Shorts) | ✅ | ✅ |
+| TikTok | ✅ | ✅ |
+| X / Twitter (posts with a video) | ✅ | ✅ |
+| Instagram | ✅ | ✅ (if the video has sound) |
+| Facebook (videos + reels) | ✅ | ✅ |
+| Dailymotion | ✅ | ✅ |
+| Vimeo, Reddit | ❌ need a login | ❌ |
 
-yt-dlp supports many more sites. Some break now and then when a site changes its pages. Updating yt-dlp usually fixes that.
+yt-dlp supports many more sites. **Not supported, ever:** paid streaming services with DRM (Netflix, Disney+, Spotify, Viu and similar).
 
-## Setup (Windows)
-Requires [Node.js](https://nodejs.org/) 18 or newer.
+## Installing: "Windows protected your PC"
+Kuha isn't code-signed (a certificate costs money), so the first time you run the installer Windows SmartScreen may show a blue **"Windows protected your PC"** box. Click **More info**, then **Run anyway**. This is normal for free apps from small developers.
+
+## Why a desktop app
+Video sites like YouTube block downloads that come from cloud servers (Vercel, Render and others). Kuha runs on your own PC and uses your home internet, so downloads work, and there's no server to host or pay for.
+
+## Build from source
+Requires [Node.js](https://nodejs.org/) 18 or newer, on Windows.
 
 ```powershell
 git clone https://github.com/dewdew-del/videodownloader.git
 cd videodownloader
 npm install
-powershell -ExecutionPolicy Bypass -File setup.ps1   # downloads yt-dlp + FFmpeg into .\bin
-npm start
+npm run fetch-tools   # downloads yt-dlp, ffmpeg and ffprobe into .\vendor
+npm start             # run the app
+npm test              # unit tests
+npm run dist          # build dist\Kuha-Setup-1.0.0.exe
 ```
 
-Open **http://localhost:3100**.
-
-To use a different port: `$env:PORT=4000; npm start`
-
-## Share it with a public link (Cloudflare Tunnel)
-```powershell
-powershell -ExecutionPolicy Bypass -File start-public.ps1
-```
-This starts the app and prints a free public link like `https://something.trycloudflare.com`. Downloads still run on your PC's home internet, so YouTube allows them. The link only works while that window is open, and you get a new link each time.
-
-## Updating yt-dlp
-If a site stops working:
-```powershell
-.\bin\yt-dlp.exe -U
-```
-
-## Why it runs locally
-Free hosting (like Vercel) can't run long downloads or FFmpeg, and many video sites block cloud servers. Running on your own PC avoids both problems, and Cloudflare Tunnel makes it reachable from anywhere.
+`node scripts/real-links.js` downloads one known public video per site, as a real-world check.
 
 ## Note
 For personal use. Only download videos you own or have permission to use, and respect each site's terms of service.
